@@ -116,17 +116,17 @@ public class Gameboard {
 	public int[] findMoveWithMostWinningPaths(char team) {
 		ArrayList<int[]> possibleMoves = findPossibleMoves(team);
 		int[] bestMove = possibleMoves.get(0);
-		int highScore = 0;
+		double highScore = 0;
 		for (int[] move : possibleMoves) {
 			Gameboard newBoard = new Gameboard(this);
 			newBoard.move(move[0], move[1], team);
-			int moveScore = newBoard.countPathsToVictory(team);
+			double moveScore = newBoard.countPathsToVictory(team);
 			if (moveScore > highScore) {
 				highScore = moveScore;
 				bestMove = move;
 			}
 		}
-		System.out.println("Move rating: " + (highScore / 2.0));
+		System.out.println("Estimated chance of winning: " + highScore + "%");
 		return bestMove;
 	}
 
@@ -137,17 +137,17 @@ public class Gameboard {
 	 * @param team Count the number of victories for this team
 	 * @return int
 	 */
-	private int countPathsToVictory(char team) {
-		int pathsToVictoryEstimate = 0;
-		final int TRIALS = 200;
+	private double countPathsToVictory(char team) {
+		double pathsToVictoryEstimate = 0;
+		final int TRIALS = 500;
 		for (int i = 0; i < TRIALS; i++) {
 			Gameboard newBoard = new Gameboard(this);
 			newBoard.finishRandomly(team);
 			if (newBoard.winnerIs(team)) {
-				pathsToVictoryEstimate++;
+				pathsToVictoryEstimate+=1;
 			}
 		}
-		return pathsToVictoryEstimate;
+		return pathsToVictoryEstimate*100/TRIALS;
 	}
 	/**
 	 * Makes random valid moves until the gameboard is finished

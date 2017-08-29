@@ -68,6 +68,7 @@ public class Othello {
 				theBoard.show();
 			}
 			System.out.print("Play again?(y/n): ");
+			scnr.nextLine();
 			playAgain = scnr.nextLine().contains("y");
 		}
 	}
