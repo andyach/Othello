@@ -41,8 +41,9 @@ public class Othello {
 		while (playAgain) {
 			Gameboard theBoard = new Gameboard();
 			theBoard.show();
+			System.out.println("===============================");
 			System.out.println("You are X's");
-			System.out.println("Would you like to go first(y/n): ");
+			System.out.print("Would you like to go first(y/n): ");
 			char player;
 			if (scnr.nextLine().contains("y")) {
 				player = 'X';
@@ -63,9 +64,11 @@ public class Othello {
 					String person = (player == 'X') ? "You" : "Computer";
 					System.out.println(person + " could not go");
 				}
-				player = switchPlayer(player);
-				theBoard.showScore();
 				theBoard.show();
+				theBoard.showScore();
+				System.out.println("===============================");
+				player = switchPlayer(player);
+				
 			}
 			System.out.print("Play again?(y/n): ");
 			scnr.nextLine();

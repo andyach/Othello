@@ -2,17 +2,20 @@ import java.util.ArrayList;
 
 public class Gameboard {
 
-	private char[][] board = {  { '-', '-', '-', '-', '-', '-', '-', '-' },
-				    { '-', '-', '-', '-', '-', '-', '-', '-' },
-				    { '-', '-', '-', '-', '-', '-', '-', '-' }, 
-				    { '-', '-', '-', 'O', 'X', '-', '-', '-' },
-			   	    { '-', '-', '-', 'X', 'O', '-', '-', '-' }, 
-				    { '-', '-', '-', '-', '-', '-', '-', '-' },
-				    { '-', '-', '-', '-', '-', '-', '-', '-' }, 
-				    { '-', '-', '-', '-', '-', '-', '-', '-' } };
+	private char[][] board = { { '-', '-', '-', '-', '-', '-', '-', '-' }, 
+							   { '-', '-', '-', '-', '-', '-', '-', '-' },
+							   { '-', '-', '-', '-', '-', '-', '-', '-' }, 
+							   { '-', '-', '-', 'O', 'X', '-', '-', '-' },
+							   { '-', '-', '-', 'X', 'O', '-', '-', '-' }, 
+							   { '-', '-', '-', '-', '-', '-', '-', '-' },
+							   { '-', '-', '-', '-', '-', '-', '-', '-' }, 
+							   { '-', '-', '-', '-', '-', '-', '-', '-' } };
+
 	/**
 	 * Creates a gameboard with an identical board as another gameboard
-	 * @param original the gameboard to copy
+	 * 
+	 * @param original
+	 *            the gameboard to copy
 	 */
 	public Gameboard(Gameboard original) {
 		for (int row = 0; row < 8; row++) {
@@ -44,7 +47,6 @@ public class Gameboard {
 			System.out.println();
 			r++;
 		}
-		System.out.println("=============================");
 	}
 
 	/**
@@ -76,6 +78,24 @@ public class Gameboard {
 	}
 
 	/**
+	 * @return true if the given player won the game
+	 */
+	public boolean winnerIs(char player) {
+		if (count(player) > count(Othello.switchPlayer(player))) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * print out the current score
+	 */
+	public void showScore() {
+		System.out.println("X: " + count('X'));
+		System.out.println("O: " + count('O'));
+	}
+
+	/**
 	 * Count how many times a character occurs on the board
 	 * 
 	 * @param team
@@ -91,14 +111,6 @@ public class Gameboard {
 			}
 		}
 		return count;
-	}
-
-	/**
-	 * print out the current score
-	 */
-	public void showScore() {
-		System.out.println("X: " + count('X'));
-		System.out.println("O: " + count('O'));
 	}
 
 	/**
@@ -147,7 +159,7 @@ public class Gameboard {
 				bestMove = posMove;
 			}
 		}
-		System.out.println("Estimated chance Human Wins: " + (100-highScore) + "%");
+		System.out.println("Estimated chance Human Wins: " + (100 - highScore) + "%");
 		return bestMove;
 	}
 
@@ -204,16 +216,6 @@ public class Gameboard {
 	private <T> T selectRandom(ArrayList<T> theList) {
 		int randNum = Othello.randGen.nextInt(theList.size());
 		return theList.get(randNum);
-	}
-
-	/**
-	 * @return true if the given player won the game
-	 */
-	public boolean winnerIs(char player) {
-		if (count(player) > count(Othello.switchPlayer(player))) {
-			return true;
-		}
-		return false;
 	}
 
 	/**
