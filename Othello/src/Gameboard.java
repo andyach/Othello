@@ -151,7 +151,6 @@ public class Gameboard {
 		return bestMove;
 	}
 
-	// recording of beating computer is with TRIALS = 200
 	/**
 	 * Count how many times the gameboard leads to a win when all moves are made
 	 * randomly
