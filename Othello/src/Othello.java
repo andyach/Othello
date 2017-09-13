@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Random;
 
@@ -15,7 +14,7 @@ public class Othello {
  * @param theBoard
  * @return
  */
-	public static int[] getMove(char player, Gameboard theBoard) {
+	public static Move getMove(char player, Gameboard theBoard) {
 		int row = -1;
 		while (row < 0 || row > 7) {
 			System.out.print("Row: ");
@@ -26,9 +25,9 @@ public class Othello {
 			System.out.print("Col: ");
 			col = scnr.nextInt();
 		}
-		int[] move = { row, col };
-		if (theBoard.isValidMove(row, col, player)) {
-			return move;
+		Move theMove = new Move(row, col, player, theBoard);
+		if (theMove.isValid()) {
+			return theMove;
 		} else {
 			System.out.println("Invalid location");
 			return getMove(player, theBoard);
@@ -42,6 +41,7 @@ public class Othello {
 		while (playAgain) {
 			Gameboard theBoard = new Gameboard();
 			theBoard.show();
+			System.out.println("You are X's");
 			System.out.println("Would you like to go first(y/n): ");
 			char player;
 			if (scnr.nextLine().contains("y")) {
@@ -50,15 +50,15 @@ public class Othello {
 				player = 'O';
 			}
 			while (theBoard.findPossibleMoves('X').size() > 0 || theBoard.findPossibleMoves('O').size() > 0) {
-				ArrayList<int[]> possibleMoves = theBoard.findPossibleMoves(player);
+				ArrayList<Move> possibleMoves = theBoard.findPossibleMoves(player);
 				if (player == 'X' && possibleMoves.size() > 0) {
-					int[] chosenMove = getMove(player, theBoard);
-					theBoard.move(chosenMove[0], chosenMove[1], player);
-					System.out.println("You selected: " + Arrays.toString(chosenMove));
+					Move chosenMove = getMove(player, theBoard);
+					theBoard.makeMove(chosenMove);
+					System.out.println("You selected " + chosenMove);
 				} else if (player == 'O' && possibleMoves.size() > 0) {
-					int[] chosenMove = theBoard.findMoveWithMostWinningPaths(player);
-					theBoard.move(chosenMove[0], chosenMove[1], player);
-					System.out.println("Computer selected: " + Arrays.toString(chosenMove));
+					Move chosenMove = theBoard.findMoveWithMostWinningPaths(player);
+					theBoard.makeMove(chosenMove);
+					System.out.println("Computer selected " + chosenMove);
 				} else {
 					String person = (player == 'X') ? "You" : "Computer";
 					System.out.println(person + " could not go");
