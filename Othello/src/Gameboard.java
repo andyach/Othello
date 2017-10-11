@@ -3,13 +3,13 @@ import java.util.ArrayList;
 public class Gameboard {
 
 	private char[][] board = { { '-', '-', '-', '-', '-', '-', '-', '-' }, 
-				   { '-', '-', '-', '-', '-', '-', '-', '-' },
-				   { '-', '-', '-', '-', '-', '-', '-', '-' }, 
-				   { '-', '-', '-', 'O', 'X', '-', '-', '-' },
-				   { '-', '-', '-', 'X', 'O', '-', '-', '-' }, 
-				   { '-', '-', '-', '-', '-', '-', '-', '-' },
-				   { '-', '-', '-', '-', '-', '-', '-', '-' }, 
-				   { '-', '-', '-', '-', '-', '-', '-', '-' } };
+							   { '-', '-', '-', '-', '-', '-', '-', '-' },
+							   { '-', '-', '-', '-', '-', '-', '-', '-' }, 
+							   { '-', '-', '-', 'O', 'X', '-', '-', '-' },
+							   { '-', '-', '-', 'X', 'O', '-', '-', '-' }, 
+							   { '-', '-', '-', '-', '-', '-', '-', '-' },
+							   { '-', '-', '-', '-', '-', '-', '-', '-' }, 
+							   { '-', '-', '-', '-', '-', '-', '-', '-' } };
 
 	/**
 	 * Creates a gameboard with an identical board as another gameboard
@@ -61,11 +61,11 @@ public class Gameboard {
 	 * @return boolean true if the move was made
 	 */
 	public boolean makeMove(Move theMove) {
-		// TODO check if that position is valid
+		// Check if that position is valid
 		if (theMove.isValid()) {
 			int[] coordinates = theMove.getCoordinates();
 			board[coordinates[0]][coordinates[1]] = theMove.getTeam();
-			// TODO adjust all necessary positions
+			// Adjust all necessary positions
 			for (int[] position : theMove.allPosToFlip()) {
 				int r = position[0];
 				int c = position[1];
