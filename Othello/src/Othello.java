@@ -15,11 +15,13 @@ public class Othello {
  * @return
  */
 	public static Move getMove(char player, Gameboard theBoard) {
+		// Ask for row
 		int row = -1;
 		while (row < 0 || row > 7) {
 			System.out.print("Row: ");
 			row = scnr.nextInt();
 		}
+		// Ask for column
 		int col = -1;
 		while (col < 0 || col > 7) {
 			System.out.print("Col: ");
@@ -30,6 +32,7 @@ public class Othello {
 			return theMove;
 		} else {
 			System.out.println("Invalid location");
+			// Ask again
 			return getMove(player, theBoard);
 		}
 	}
@@ -41,70 +44,82 @@ public class Othello {
 	}
 
 	public static Scanner scnr = new Scanner(System.in);
-
+	
+	private static boolean takeTurn(char curPlayer, char otherPlayer, Gameboard theBoard) {
+		boolean gameOver = false;
+		
+		// Check if the current player can play
+		ArrayList<Move> curPlayerMoves = theBoard.findPosMoves(curPlayer);
+		boolean curPlayerCanPlay = curPlayerMoves.size() > 0;
+		
+		if (!curPlayerCanPlay) {
+			String person = (curPlayer == 'X') ? "You" : "Computer";
+			System.out.println(person + " could not go");
+			
+			// If neither player can go, the game is over
+			ArrayList<Move> otherPlayerMoves = theBoard.findPosMoves(otherPlayer);
+			gameOver = otherPlayerMoves.size() == 0;
+		}
+		// Current player is human
+		else if (curPlayer == 'X') {
+			Move chosenMove = getMove(curPlayer, theBoard);
+			theBoard.makeMove(chosenMove);
+			System.out.println("You selected " + chosenMove);
+		} 
+		// Current player is computer
+		else if (curPlayer == 'O') {
+			Move chosenMove;
+			int openSpaces = 64-(theBoard.count('X') + theBoard.count('O'));
+			if(openSpaces <= AI.MAX_SEARCH_DEPTH) {
+				chosenMove = AI.alphaBetaSearch(theBoard, curPlayer);
+			}
+			else{
+				chosenMove = AI.findMoveMonteCarlo(curPlayer, theBoard);
+			}
+			theBoard.makeMove(chosenMove);
+			System.out.println("Computer selected " + chosenMove);
+		}
+		return gameOver;
+	}
+	
 	public static void main(String[] args) {
 		boolean playAgain;
+		char curPlayer, otherPlayer;
+		
+		// Give human the option to go first
+		System.out.println("You are X's");
+		System.out.print("Would you like to go first(y/n): ");
+
+		// Human is always X's
+		// curPlayer will go first. 
+		if (scnr.nextLine().contains("y")) {
+			curPlayer = 'X';
+			otherPlayer = 'O';
+		} else {
+			curPlayer = 'O';
+			otherPlayer = 'X';
+		}
+		
 		do{
 			Gameboard theBoard = new Gameboard();
-			
-			// Give human the option to go first
-			System.out.println("You are X's");
-			System.out.print("Would you like to go first(y/n): ");
-			char curPlayer;
-			char otherPlayer;
-			if (scnr.nextLine().contains("y")) {
-				curPlayer = 'X';
-				otherPlayer = 'O';
-			} else {
-				curPlayer = 'O';
-				otherPlayer = 'X';
-			}
-			
+			boolean gameOver = false;
 			showGameInfo(theBoard);
-			
-			// Update the curPlayer status
-			ArrayList<Move> curPlayerPosMoves = theBoard.findPossibleMoves(curPlayer);
-			boolean curPlayerCanPlay = curPlayerPosMoves.size() > 0;
-			
-			// Update the otherPlayer status
-			ArrayList<Move> otherPlayerPosMoves = theBoard.findPossibleMoves(otherPlayer);
-			boolean otherPlayerCanPlay = otherPlayerPosMoves.size() > 0;
-			
 			// The turn loop
 			do {
-				if (!curPlayerCanPlay) {
-					String person = (curPlayer == 'X') ? "You" : "Computer";
-					System.out.println(person + " could not go");
-				}
-				else if (curPlayer == 'X') {// Human
-					Move chosenMove = getMove(curPlayer, theBoard);
-					theBoard.makeMove(chosenMove);
-					System.out.println("You selected " + chosenMove);
-				} 
-				else if (curPlayer == 'O') {// Computer
-					Move chosenMove = theBoard.findMoveWithMostWinningPaths(curPlayer);
-					theBoard.makeMove(chosenMove);
-					System.out.println("Computer selected " + chosenMove);
-				} 
+				gameOver = takeTurn(curPlayer, otherPlayer, theBoard);
 				
 				showGameInfo(theBoard);
 				
-				// Update the curPlayer status
+				// Switch curPlayer and otherPlayer
 				curPlayer = switchPlayer(curPlayer);
-				curPlayerPosMoves = theBoard.findPossibleMoves(curPlayer);
-				curPlayerCanPlay = curPlayerPosMoves.size() > 0;
-				
-				// Update the otherPlayer status
 				otherPlayer = switchPlayer(otherPlayer);
-				otherPlayerPosMoves = theBoard.findPossibleMoves(otherPlayer);
-				otherPlayerCanPlay = otherPlayerPosMoves.size() > 0;
-				
-			} while (curPlayerCanPlay || otherPlayerCanPlay);
+			} while (!gameOver);
 			
 			// Ask if the Human would like to play again
 			System.out.print("Play again?(y/n): ");
 			scnr.nextLine();
 			playAgain = scnr.nextLine().contains("y");
+
 		}while (playAgain);
 	}
 }

@@ -63,22 +63,25 @@ public class Gameboard {
 	public boolean makeMove(Move theMove) {
 		// Check if that position is valid
 		if (theMove.isValid()) {
+			// Place the players piece
 			int[] coordinates = theMove.getCoordinates();
 			board[coordinates[0]][coordinates[1]] = theMove.getTeam();
-			// Adjust all necessary positions
+			
+			// Change all other necessary positions
 			for (int[] position : theMove.allPosToFlip()) {
-				int r = position[0];
-				int c = position[1];
-				board[r][c] = theMove.getTeam();
+				int row = position[0];
+				int col = position[1];
+				board[row][col] = theMove.getTeam();
 			}
 			return true;
-		} else {
+		} 
+		else {
 			return false;
 		}
 	}
 
 	/**
-	 * @return true if the given player won the game
+	 * @return true if the given player has a larger score
 	 */
 	public boolean winnerIs(char player) {
 		if (count(player) > count(Othello.switchPlayer(player))) {
@@ -102,7 +105,7 @@ public class Gameboard {
 	 *            The char to look for
 	 * @return int the number of times the char occurs
 	 */
-	private int count(char team) {
+	public int count(char team) {
 		int count = 0;
 		for (char[] row : board) {
 			for (char position : row) {
@@ -113,75 +116,9 @@ public class Gameboard {
 		return count;
 	}
 
-	/**
-	 * An AI technique that finds the move that would allow the opponent the fewest
-	 * number of options for places to go on their turn
-	 * 
-	 * @param team
-	 *            The char of the player making this move
-	 * @return An int[] of the move like {row, col}
-	 */
-	public Move findMoveWhichAllowsFewestOptions(char team) {
-		ArrayList<Move> possibleMoves = findPossibleMoves(team);
-		Move bestMove = possibleMoves.get(0);
-		int lowestScore = 100;
-		for (Move posMove : possibleMoves) {
-			Gameboard newBoard = new Gameboard(this);
-			newBoard.makeMove(posMove);
-			char opponent = Othello.switchPlayer(team);
-			int score = newBoard.findPossibleMoves(opponent).size();
-			if (score < lowestScore) {
-				lowestScore = score;
-				bestMove = posMove;
-			}
-		}
-		return bestMove;
-	}
-
-	/**
-	 * An AI technique that finds the move that gives the greatest chance of winning
-	 * if all moves after this move were made randomly by both players.
-	 * 
-	 * @param team
-	 *            The char of the player making this move
-	 * @return An int[] of the move like {row, col}
-	 */
-	public Move findMoveWithMostWinningPaths(char team) {
-		ArrayList<Move> possibleMoves = findPossibleMoves(team);
-		Move bestMove = possibleMoves.get(0);
-		double highScore = 0;
-		for (Move posMove : possibleMoves) {
-			Gameboard newBoard = new Gameboard(this);
-			newBoard.makeMove(posMove);
-			double moveScore = newBoard.countPathsToVictory(team);
-			if (moveScore > highScore) {
-				highScore = moveScore;
-				bestMove = posMove;
-			}
-		}
-		System.out.println("Estimated chance Human Wins: " + (100 - highScore) + "%");
-		return bestMove;
-	}
-
-	/**
-	 * Count how many times the gameboard leads to a win when all moves are made
-	 * randomly
-	 * 
-	 * @param team
-	 *            Count the number of victories for this team
-	 * @return int
-	 */
-	private double countPathsToVictory(char team) {
-		double pathsToVictoryEstimate = 0;
-		final int TRIALS = 500;
-		for (int i = 0; i < TRIALS; i++) {
-			Gameboard newBoard = new Gameboard(this);
-			newBoard.finishRandomly(team);
-			if (newBoard.winnerIs(team)) {
-				pathsToVictoryEstimate += 1;
-			}
-		}
-		return pathsToVictoryEstimate * 100 / TRIALS;
+	public int scoreDifference(char player) {
+		char otherPlayer = Othello.switchPlayer(player);
+		return count(player) - count(otherPlayer);
 	}
 
 	/**
@@ -193,8 +130,10 @@ public class Gameboard {
 	 */
 	public void finishRandomly(char playerJustWent) {
 		char player = Othello.switchPlayer(playerJustWent);
-		ArrayList<Move> possibleMoves = this.findPossibleMoves(player);
-		while (possibleMoves.size() != 0 || this.findPossibleMoves(playerJustWent).size() != 0) {
+		ArrayList<Move> possibleMoves = this.findPosMoves(player);
+		
+		// Keep make moves as long as one of the players can go
+		while (possibleMoves.size() != 0 || this.findPosMoves(playerJustWent).size() != 0) {
 
 			if (possibleMoves.size() > 0) {
 				Move selectedMove = selectRandom(possibleMoves);
@@ -203,7 +142,7 @@ public class Gameboard {
 
 			playerJustWent = player;
 			player = Othello.switchPlayer(player);
-			possibleMoves = this.findPossibleMoves(player);
+			possibleMoves = this.findPosMoves(player);
 		}
 	}
 
@@ -213,19 +152,19 @@ public class Gameboard {
 	 * @param theList
 	 *            ArrayList
 	 */
-	private <T> T selectRandom(ArrayList<T> theList) {
+	public <T> T selectRandom(ArrayList<T> theList) {
 		int randNum = Othello.randGen.nextInt(theList.size());
 		return theList.get(randNum);
 	}
 
 	/**
-	 * @return An ArrayList of all the possible moves the current team can make
+	 * @return An ArrayList of all the possible moves the given player can make
 	 */
-	public ArrayList<Move> findPossibleMoves(char team) {
+	public ArrayList<Move> findPosMoves(char player) {
 		ArrayList<Move> possibleMoves = new ArrayList<Move>();
 		for (int row = 0; row < 8; row++) {
 			for (int col = 0; col < 8; col++) {
-				Move posMove = new Move(row, col, team, this);
+				Move posMove = new Move(row, col, player, this);
 				if (posMove.isValid()) {
 					possibleMoves.add(posMove);
 				}
