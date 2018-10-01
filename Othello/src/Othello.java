@@ -8,12 +8,13 @@ public class Othello {
 	public static char switchPlayer(char player) {
 		return (player == 'X') ? 'O' : 'X';
 	}
-/**
- * Gets a move from the human player
- * @param player The char of the player
- * @param theBoard
- * @return
- */
+	
+	/**
+	 * Gets a move from the human player
+	 * @param player The char of the player
+	 * @param theBoard
+	 * @return
+	 */
 	public static Move getMove(char player, Gameboard theBoard) {
 		// Ask for row
 		int row = -1;
@@ -37,6 +38,10 @@ public class Othello {
 		}
 	}
 	
+	/**
+	 * Show the current board and the score
+	 * @param board
+	 */
 	public static void showGameInfo(Gameboard board) {
 		board.show();
 		board.showScore();
@@ -45,7 +50,11 @@ public class Othello {
 
 	public static Scanner scnr = new Scanner(System.in);
 	
-	private static boolean takeTurn(char curPlayer, char otherPlayer, Gameboard theBoard) {
+	/**
+	 * Runs through one turn in the game. Returns True if the game is 
+	 * over (neither player can go).
+	 */
+	private static boolean takeTurn(char curPlayer, Gameboard theBoard) {
 		boolean gameOver = false;
 		
 		// Check if the current player can play
@@ -57,8 +66,9 @@ public class Othello {
 			System.out.println(person + " could not go");
 			
 			// If neither player can go, the game is over
-			ArrayList<Move> otherPlayerMoves = theBoard.findPosMoves(otherPlayer);
-			gameOver = otherPlayerMoves.size() == 0;
+			char otherPlayer = switchPlayer(curPlayer);
+			ArrayList<Move> othPlayerMoves = theBoard.findPosMoves(otherPlayer);
+			gameOver = othPlayerMoves.size() == 0;
 		}
 		// Current player is human
 		else if (curPlayer == 'X') {
@@ -100,13 +110,15 @@ public class Othello {
 			otherPlayer = 'X';
 		}
 		
+		// The game loop
 		do{
 			Gameboard theBoard = new Gameboard();
 			boolean gameOver = false;
 			showGameInfo(theBoard);
+			
 			// The turn loop
 			do {
-				gameOver = takeTurn(curPlayer, otherPlayer, theBoard);
+				gameOver = takeTurn(curPlayer, theBoard);
 				
 				showGameInfo(theBoard);
 				

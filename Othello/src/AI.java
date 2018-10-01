@@ -4,11 +4,11 @@ public class AI {
 	public static int MAX_SEARCH_DEPTH = 12;
 
 	/**
-	 * An AI technique that finds the move that gives the greatest chance of winning
-	 * if all moves after this move were made randomly by both players.
+	 * An AI technique that finds the move that gives the greatest chance of 
+	 * winning if all moves after this move were made randomly by both players.
 	 * 
 	 * @param player The char of the player making this move
-	 * @return An int[] of the move in the form {row, col}
+	 * @return The Move that is found to be good
 	 */
 	public static Move findMoveMonteCarlo(char player, Gameboard board) {
 		ArrayList<Move> possibleMoves = board.findPosMoves(player);
@@ -51,10 +51,10 @@ public class AI {
 	}
 
 	/**
-	 * Identifies the move with the best worst case scenario. It should never be called
-	 * when the player has no legal moves on this Gameboard.
-	 * If this search is called when no legal move is available, the game
-	 * should have already ended.
+	 * Identifies the move with the best worst case scenario. It should never 
+	 * be called when the player has no legal moves on this Gameboard.
+	 * If no legal move is available, it should be the other player's turn, 
+	 * or the game should be over.
 	 * 
 	 * @return The best Move available. Returns null if there are no
 	 * legal moves from this state.
@@ -158,6 +158,4 @@ public class AI {
 
 		return bestVal;
 	}
-
-
 }
